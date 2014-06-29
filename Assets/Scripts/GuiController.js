@@ -5,20 +5,10 @@ private var pauseTime	: float;
 private var timePaused	: float;
 var textTime 			: String;
 
+// Otros objetos del juego
+var main : MainController;
 
-// Game info
-public static var LEVEL_NOT_INITIALIZED : int = 0;
-public static var LEVEL_RUNNING 		: int = 1;
-public static var LEVEL_PAUSED 			: int = 2;
-public static var LEVEL_COMPLETED 		: int = 3;
-public static var GAME_OVER 			: int = 4;
-
-var levelStatus 	: int;
-var pelletsRemains 	: int;
-var livesRemains 	: int;
-var score 			: int;
-
-// Gui elements' size
+// Medidas de los elmentos de la interfaz
 var vSpacing 	: int = 5;
 var hSpacing 	: int = 5;
 var labelWidth 	: int = 130;
@@ -26,29 +16,28 @@ var labelHeight : int = 25;
 var boxWidth 	: int = 150;
 var boxHeight	: int = 35; 
 
-
-// Style elements
+// Elementos de estilo
 var centerLabel : GUIStyle;
 var mySkin 		: GUISkin = null; 
 
-// Variables for control the differents screens
+// Iconos de la interfaz
 var pacmanIcon 		: Texture2D;
 var pelletIcon 		: Texture2D;
 var powerUpIcon 	: Texture2D;
 
-
-// Axiliar variables
+// Auxiliar variables
 var top  : int;
 var left : int;
 var boxMiddle : int = (boxWidth / 2) - 5;
 
 
 function Start() {
+	
+	main = FindObjectOfType(MainController);
+
 	startTime = Time.time;
 	timePaused = 0;
 	boxHeight = 35;
-
-	levelStatus = LEVEL_RUNNING;
 }
 
 
@@ -56,16 +45,16 @@ function OnGUI () {
 	
 	GUI.skin = mySkin;
 	
-	switch (levelStatus) {
-		case LEVEL_RUNNING:
+	switch (main.LEVEL_STATUS) {
+		case main.LEVEL_RUNNING:
 			DrawLevelRunning();
 			break;
-		case LEVEL_PAUSED:
+		case main.LEVEL_PAUSED:
 			DrawLevelPaused();
 			break;
-		case LEVEL_COMPLETED:
+		case main.LEVEL_COMPLETED:
 			break;
-		case GAME_OVER:
+		case main.GAME_OVER:
 			break;
 	}
 
@@ -115,7 +104,7 @@ function DrawLivesInfo () {
 
 	GUI.Box(new Rect(left, top, width, boxHeight), "");
 	GUI.Label(new Rect(left + hSpacing, top + vSpacing, 16, labelHeight), pacmanIcon);
-	GUI.Label(new Rect(left + hSpacing + 20, top + vSpacing, boxMiddle, labelHeight), "x" + livesRemains);
+	GUI.Label(new Rect(left + hSpacing + 20, top + vSpacing, boxMiddle, labelHeight), "x" + main.LIVES);
 }
 
 /**
@@ -129,7 +118,7 @@ function DrawPelletsInfo () {
 
 	GUI.Box(new Rect(aux, top, width, boxHeight), "");
 	GUI.Label(new Rect(aux + hSpacing, top + vSpacing, 16, labelHeight), pelletIcon);
-	GUI.Label(new Rect(aux + hSpacing + 20, top + vSpacing, boxMiddle, labelHeight), "x" + pelletsRemains);
+	GUI.Label(new Rect(aux + hSpacing + 20, top + vSpacing, boxMiddle, labelHeight), "x" + main.PELLETS);
 
 	top = top + boxHeight + vSpacing ;	
 }
@@ -139,7 +128,7 @@ function DrawPelletsInfo () {
  */
 function DrawScoreInfo () {
 	GUI.Box(new Rect(left, top, boxWidth, boxHeight), "");
-	GUI.Label(new Rect(left + hSpacing, top + vSpacing, labelWidth, labelHeight), "Score: " + score, centerLabel);
+	GUI.Label(new Rect(left + hSpacing, top + vSpacing, labelWidth, labelHeight), "Score: " + main.SCORE, centerLabel);
 
 	top = top + boxHeight + vSpacing ;
 }
@@ -154,58 +143,10 @@ function DrawLevelPaused () {
 	
 	GUI.Box(new Rect(left, top, 300, 300), "Game paused");
 	left += hSpacing; top += 100;
-	GUI.Label(new Rect(left + hSpacing, top + vSpacing, labelWidth, labelHeight), "Score: " + score, centerLabel);
+	GUI.Label(new Rect(left + hSpacing, top + vSpacing, labelWidth, labelHeight), "Score: " + main.SCORE, centerLabel);
 	left += 50; top += 150;
+	
 	if(GUI.Button(new Rect(left, top, 200, 30), "Resume game")){
-		ResumeLevel();
-	}
-}
-
-function PelletEated () {
-	pelletsRemains--;
-}
-
-function SetPellets (number: int) {
-	pelletsRemains = number;
-}
-
-function PlayerDied () {
-	livesRemains--;
-}
-
-function SetLives (lives: int) {
-	livesRemains = lives;
-}
-
-function SetScore (newScore: int) {
-	score = newScore;	
-}
-
-function LevelCompleted(){
-	levelStatus = LEVEL_COMPLETED;
-}
-
-function GameOver () {
-	levelStatus = GAME_OVER;
-}
-
-function PauseLevel () {
-	levelStatus = LEVEL_PAUSED;
-	pauseTime = Time.time;
-	Time.timeScale = 0;
-}
-
-function ResumeLevel () {
-	levelStatus = LEVEL_RUNNING;
-	timePaused += Time.time - pauseTime;
-	Time.timeScale = 1;
-}
-
-function ToggleLevelPaused () {
-	if (levelStatus == GAME_OVER) return;
-	if (levelStatus == LEVEL_PAUSED) {
-		ResumeLevel();
-	} else {
-		PauseLevel();
+		main.LEVEL_STATUS = main.LEVEL_RUNNING;
 	}
 }
