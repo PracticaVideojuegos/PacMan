@@ -12,6 +12,7 @@ public static var LEVEL_RUNNING 		: int = 1;
 public static var LEVEL_PAUSED 			: int = 2;
 public static var LEVEL_COMPLETED 		: int = 3;
 public static var GAME_OVER 			: int = 4;
+
 var levelStatus 	: int;
 var pelletsRemains 	: int;
 var livesRemains 	: int;

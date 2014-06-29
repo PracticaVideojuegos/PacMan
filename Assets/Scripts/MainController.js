@@ -38,9 +38,9 @@ function Update () {
 function LoadNextLevel () {
 	level++;
 	
-	// Board initialization
-	numberOfPellets = pelletInitializer.InitializeBoard();
-	gui.SetPellets(numberOfPellets);
+	// Inizializacion del tablero
+	gui.pelletsRemains = pelletInitializer.InitializeBoard();
+	//gui.SetPellets(numberOfPellets);
 	gui.ResumeLevel();
 }
 
