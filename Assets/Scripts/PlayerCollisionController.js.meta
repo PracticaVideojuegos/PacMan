@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: bc70eca49288d324e81814ffa2faeb30
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - wakaSound: {fileID: 8300000, guid: 2660b486c44db3a46bbc94eeb3b676fb, type: 3}
+  - dieSound: {fileID: 8300000, guid: e25c046da08d70a488dd154366a42910, type: 3}
+  - main: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

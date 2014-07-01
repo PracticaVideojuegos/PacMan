@@ -19,13 +19,16 @@ function Update () {
  */
 function InitializeBoard() : int {
 	
+	// Eliminamos las bolas que haya en el tablero, antes de poner nuevas
+	DestroyAllPellets();
+	
 	// Leemos el fichero donde tenemos guardada la configuración del tablero
 	var sr : System.IO.StreamReader = new System.IO.StreamReader("./pellets.txt");
 	var input : String = sr.ReadLine();
 	var n : int = 0;
 	
 	for(var j = 0; input != null; j++) {
-	
+
 		for (var i=0; i<input.Length; i++) {
 			var c = input[i];
 			
@@ -55,3 +58,20 @@ function InitializeBoard() : int {
 
 	return n;
 }
+
+
+function DestroyAllPellets(){
+	
+	var pellets = GameObject.FindGameObjectsWithTag("Pellet");
+	var powerpellets = GameObject.FindGameObjectsWithTag("PowerPellet");
+
+	for( var pellet in pellets ){
+		Destroy(pellet.gameObject);
+	}
+	
+	for( var power in powerpellets ){
+		Destroy(power.gameObject);
+	}
+}
+
+

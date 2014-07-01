@@ -1,3 +1,7 @@
+/**
+ * Controlador de la interfaz.
+ */
+ 
 #pragma strict
 
 private var startTime 	: float;
@@ -35,12 +39,22 @@ function Start() {
 	
 	main = FindObjectOfType(MainController);
 
-	startTime = Time.time;
-	timePaused = 0;
 	boxHeight = 35;
+
+	NewGame();
 }
 
+/**
+ * Cuando empieza un nuevo juego, inicializamos las variables.
+ */
+function NewGame() {
+	startTime =  Time.time;
+	timePaused = 0;
+}
 
+/**
+ * Dibujamos la interfaz en funcion del estado del juego
+ */
 function OnGUI () {
 	
 	GUI.skin = mySkin;
@@ -53,13 +67,31 @@ function OnGUI () {
 			DrawLevelPaused();
 			break;
 		case main.LEVEL_COMPLETED:
+			DrawLevelCompleted();
 			break;
 		case main.GAME_OVER:
+			DrawGameOver();
 			break;
 	}
 
 }
 
+/**
+ * Actualiza el reloj.
+ */
+function UpdateTimer () {
+	var guiTime = Time.time - startTime - timePaused; 
+
+	var minutes  : int = guiTime / 60; // Dividimos el tiempo entre 60 para obtener los minutos
+	var seconds  : int = guiTime % 60; // Calculamos los segundos
+	var fraction : int = (guiTime * 100) % 100;
+	 
+	textTime = String.Format ("{0:00}:{1:00}:{2:00}", minutes, seconds, fraction); 
+}
+
+/**
+ * Dibujamos la interfaz del juego mientras se está jugando.
+ */
 function DrawLevelRunning () {
 	top  = vSpacing;
 	left = hSpacing;
@@ -72,21 +104,9 @@ function DrawLevelRunning () {
 }
 
 /**
- * Updates the Timer on screen.
- */
-function UpdateTimer () {
-	var guiTime = Time.time - startTime - timePaused; 
-
-	var minutes  : int = guiTime / 60; //Divide the guiTime by sixty to get the minutes.
-	var seconds  : int = guiTime % 60;//Use the euclidean division for the seconds.
-	var fraction : int = (guiTime * 100) % 100;
-	 
-	textTime = String.Format ("{0:00}:{1:00}:{2:00}", minutes, seconds, fraction); 
-}
-
-/**
- * Draws the timer. Prints on screen the time 
- * that has passed since the start of the game.
+ * Dibuja el reloj en la pantalla, mostrando
+ * al usuario el tiempo transcurrido desde el inicio
+ * del nivel actual.
  */
 function DrawTimer () {
 	GUI.Box(new Rect(left, top, boxWidth, boxHeight), "");
@@ -96,7 +116,8 @@ function DrawTimer () {
 }
 
 /**
- * Draws the lives remains on the screen.
+ * Muestra en la interfaz el numero de vidas 
+ * restantes del usuario.
  */
 function DrawLivesInfo () {
 	var width = boxWidth - vSpacing;
@@ -108,8 +129,8 @@ function DrawLivesInfo () {
 }
 
 /**
- * Draws the pellets remains in the current
- * on the screen.
+ * Muestra en la interfaz el numero de pellets
+ * restantes en el terreno.
  */
 function DrawPelletsInfo () {
 	var width = boxWidth - vSpacing;
@@ -124,7 +145,7 @@ function DrawPelletsInfo () {
 }
 
 /**
- * Draws the score on the screen.
+ * Muestra la puntuación del usuario en la interfaz.
  */
 function DrawScoreInfo () {
 	GUI.Box(new Rect(left, top, boxWidth, boxHeight), "");
@@ -133,12 +154,20 @@ function DrawScoreInfo () {
 	top = top + boxHeight + vSpacing ;
 }
 
+
+/**
+ * Muestra en la interfaz los "poderes" que posee
+ * el usuario en cada momento.
+ */
 function DrawPowerUpsInfo () {
 	
 }
 
+/**
+ * Muestra la interfaz cuando el juego esta en pausa.
+ */
 function DrawLevelPaused () {
-	top = (Screen.height / 2) - 150;
+	top  = (Screen.height / 2) - 150;
 	left = (Screen.width / 2) - 150;
 	
 	GUI.Box(new Rect(left, top, 300, 300), "Game paused");
@@ -150,3 +179,63 @@ function DrawLevelPaused () {
 		main.LEVEL_STATUS = main.LEVEL_RUNNING;
 	}
 }
+
+/**
+ * Muestra la interfaz cuando el jugador ha completado 
+ * un nivel.
+ */
+function DrawLevelCompleted() {
+	top  = (Screen.height / 2) - 150;
+	left = (Screen.width / 2) - 150;
+	var boxsize = 300;
+	var lblsize = 300 - (2* hSpacing);
+	
+	GUI.Box(new Rect(left, top, boxsize, boxsize), "You're awesome!");
+	left += hSpacing; top += 100;
+	GUI.Label(new Rect(left + hSpacing, top + vSpacing, lblsize, labelHeight), "Your Score: ", centerLabel);
+	top += vSpacing + labelHeight;
+	GUI.Label(new Rect(left + hSpacing, top + vSpacing, lblsize, labelHeight), ""+main.SCORE, centerLabel);
+	left += 50; top += 100;
+	
+	if(GUI.Button(new Rect(left, top, 200, 30), "Next Level")){
+		main.LoadNextLevel();
+	}	
+}
+
+
+/**
+ * Muestra la interfaz cuando el jugador pierde el juego, es
+ * decir, cuando no le quedan vidas restantes.
+ */
+function DrawGameOver() {
+	top  = (Screen.height / 2) - 150;
+	left = (Screen.width / 2) - 150;
+	var boxsize = 300;
+	var lblsize = 300 - (2* hSpacing);
+	
+	GUI.Box(new Rect(left, top, boxsize, boxsize), "Game Over");
+	left += hSpacing; top += 100;
+	GUI.Label(new Rect(left + hSpacing, top + vSpacing, lblsize, labelHeight), "Your Score: ", centerLabel);
+	top += vSpacing + labelHeight;
+	GUI.Label(new Rect(left + hSpacing, top + vSpacing, lblsize, labelHeight), ""+main.SCORE, centerLabel);
+	left += 50; top += 100;
+	
+	if(GUI.Button(new Rect(left, top, 200, 30), "Start New Game")){
+		main.NewGame();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
