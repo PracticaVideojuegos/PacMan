@@ -21,6 +21,10 @@ public static var LEVEL					: int;
 public static var LIVES					: int;
 public static var PELLETS				: int;
 public static var SCORE					: int;
+var initSound							: AudioClip;
+var initSoundDuration					: float = 4;
+var sirenSound							: AudioClip;
+var sirenSoundDuration					: float = 2;
 
 // Jugador
 var player : GameObject;
@@ -65,6 +69,15 @@ function NewGame() {
 	
 	gui.NewGame();
 	LoadNextLevel();
+	
+	audio.clip = initSound;
+	audio.Play();
+	// Esperamos a que el sonido termine
+	yield WaitForSeconds(initSoundDuration);
+	
+	audio.clip = sirenSound;
+	audio.Play();
+	yield WaitForSeconds(sirenSoundDuration);
 }
 
 
@@ -76,7 +89,7 @@ function LoadNextLevel () {
 	
 	// Inizializacion del tablero
 	PELLETS = pelletInitializer.InitializeBoard();
-	PELLETS = 3;
+	PELLETS = 228;
 	LEVEL_STATUS = LEVEL_RUNNING;
 	
 	Time.timeScale = 1;
@@ -121,6 +134,8 @@ function PlayerDied() {
 	if(LIVES <= 0) {
 		LEVEL_STATUS = GAME_OVER;
 		Time.timeScale = 0;
+	}else{
+		MovePlayerToStartPosition();
 	}
 
 }

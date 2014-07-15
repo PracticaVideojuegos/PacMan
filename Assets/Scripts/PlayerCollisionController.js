@@ -2,6 +2,7 @@
 
 var wakaSound : AudioClip;
 var dieSound : AudioClip;
+var powerUpSound : AudioClip;
 
 var main 			: MainController;
 var animaStartTime  : float;
@@ -9,6 +10,8 @@ var animDuration    : float = 5;
 var animating		: boolean = false;
 var animFromRot		: Quaternion;
 var animToRot		: Quaternion;
+var timeInitPowerUp	: float = (-10);
+var durationPowerUp : float = 10;
 
 function Start () {
 
@@ -39,20 +42,28 @@ function Update () {
  */
 function OnTriggerEnter(other : Collider) {
 
-	// Si colisionamos con una bola, reproducimos un sonido y 
+	// Si colisionamos con una bola, reproducimos un sonido (solo si no estamos en powerUp) y 
 	// alertamos al controlador principal.
 	if (other.gameObject.CompareTag("Pellet") ||
 		other.gameObject.CompareTag("PowerPellet") ){
 		
-		audio.clip = wakaSound;
-		audio.Play();
+		if(Time.time-timeInitPowerUp > durationPowerUp || Time.time<durationPowerUp){
+			audio.clip = wakaSound;
+			audio.Play();
+		}
 		
 		main.PelletEated(other.CompareTag("PowerPellet"));
 		Destroy(other.gameObject);
 		
+		//Si colisionamos con una bola azul, anotamos el tiempo y reproducimos un sonido
+		if(other.gameObject.CompareTag("PowerPellet")){
+			timeInitPowerUp = Time.time;
+			audio.clip = powerUpSound;
+			audio.Play();
+		}
 	} else 
-	// Si colisionamos con un enemigo...
-	if (other.gameObject.CompareTag("Enemy")){
+	// Si colisionamos con un enemigo...(se comprueba si estamos en powerUp)
+	if (other.gameObject.CompareTag("Enemy") && Time.time-timeInitPowerUp > durationPowerUp){
 		
 		// Reproducimos un audio
 		audio.clip = dieSound;
